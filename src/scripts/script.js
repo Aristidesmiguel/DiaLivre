@@ -1,14 +1,13 @@
 /****************************************************
  * CONFIGURAÇÕES GERAIS
  ****************************************************/
-const API_KEY = "AqIR90xVhSLZwWTQ61gOC518QGZXlAlJ";
-const COUNTRY = "AO";
 
 /****************************************************
  * UTILITÁRIOS DE DATA
  ****************************************************/
-const pad = n => String(n).padStart(2, "0");
-const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const pad = (n) => String(n).padStart(2, "0");
+const toISO = (d) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 /****************************************************
  * TRADUÇÃO DE FERIADOS (EN → PT)
@@ -16,14 +15,14 @@ const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate(
 const holidayTranslations = {
   "New Year's Day": "Dia de Ano Novo",
   "Liberation Day": "Dia da Libertação",
-  "Carnival": "Carnaval",
+  Carnival: "Carnaval",
   "Good Friday": "Sexta-feira Santa",
   "Easter Sunday": "Páscoa",
   "International Workers' Day": "Dia do Trabalhador",
   "National Heroes Day": "Dia do Herói Nacional",
   "All Souls' Day": "Dia dos Finados",
   "Independence Day": "Dia da Independência",
-  "Christmas Day": "Natal"
+  "Christmas Day": "Natal",
 };
 
 /****************************************************
@@ -34,11 +33,31 @@ function datasComemorativas(year) {
   return [
     { date: `${year}-01-06`, title: "Dia de Reis", type: "observance" },
     { date: `${year}-05-25`, title: "Dia de África", type: "observance" },
-    { date: `${year}-06-01`, title: "Dia Internacional da Criança", type: "observance" },
-    { date: `${year}-06-16`, title: "Dia da Criança Africana", type: "observance" },
-    { date: `${year}-07-31`, title: "Dia da Mulher Africana", type: "observance" },
-    { date: `${year}-09-21`, title: "Dia Internacional da Paz", type: "observance" },
-    { date: `${year}-12-01`, title: "Dia Mundial da Luta contra a SIDA", type: "observance" }
+    {
+      date: `${year}-06-01`,
+      title: "Dia Internacional da Criança",
+      type: "observance",
+    },
+    {
+      date: `${year}-06-16`,
+      title: "Dia da Criança Africana",
+      type: "observance",
+    },
+    {
+      date: `${year}-07-31`,
+      title: "Dia da Mulher Africana",
+      type: "observance",
+    },
+    {
+      date: `${year}-09-21`,
+      title: "Dia Internacional da Paz",
+      type: "observance",
+    },
+    {
+      date: `${year}-12-01`,
+      title: "Dia Mundial da Luta contra a SIDA",
+      type: "observance",
+    },
   ];
 }
 
@@ -48,54 +67,66 @@ function datasComemorativas(year) {
 async function buscarFeriados(year) {
   try {
     const res = await fetch(
-      `https://calendarific.com/api/v2/holidays?api_key=${API_KEY}&country=AO&year=${year}&type=national,religious`
+      `https://calendarific.com/api/v2/holidays?api_key=17vJv307iWUmG7sZ0kWVQwjx5sfvhHF2&country=AO&language=fr&year=${year}`
     );
+
     const json = await res.json();
+    console.log("Response: ", json);
 
-    return json.response.holidays.map(h => ({
+    if (!json.response.holidays || !Array.isArray(json.response.holidays)) {
+      console.log("Nenhum feriado retornado pela API");
+
+      return [];
+    }
+     console.log("Response: ", json);
+    return json.response.holidays.map((h) => ({
       date: h.date.iso,
-      title: h.name_local || holidayTranslations[h.name] || h.name,
-      type: "holiday"
+      title: h.name_local || holidayTranslations?.[h.name] || h.name,
+      type: "holiday",
     }));
-
   } catch (e) {
     console.error(e);
     return [];
   }
 }
 
-
 /****************************************************
  * GERAR PONTES
  ****************************************************/
 function gerarPontes(holidays) {
   const bridges = [];
+  console.log("HOLIDAYS:", holidays);
 
-  holidays.forEach(h => {
+  holidays.forEach((h) => {
     const d = new Date(h.date);
     const day = d.getDay();
 
-    // Terça → Segunda
+    const candidates = [];
+
     if (day === 2) {
       const p = new Date(d);
       p.setDate(d.getDate() - 1);
-      bridges.push({
-        date: toISO(p),
-        title: "Ponte",
-        type: "bridge"
-      });
+      candidates.push(p);
     }
 
-    // Quinta → Sexta
     if (day === 4) {
       const p = new Date(d);
       p.setDate(d.getDate() + 1);
-      bridges.push({
-        date: toISO(p),
-        title: "Ponte",
-        type: "bridge"
-      });
+      candidates.push(p);
     }
+
+    candidates.forEach((p) => {
+      const iso = toISO(p);
+      const wd = p.getDay();
+
+      if (wd !== 0 && wd !== 6 && !bridges.some((b) => b.date === iso)) {
+        bridges.push({
+          date: iso,
+          title: "Ponte",
+          type: "bridge",
+        });
+      }
+    });
   });
 
   return bridges;
@@ -109,15 +140,24 @@ const userEvents = [
   // eventos de teste confundem o calendário
 ];
 
-
 window.calEvents = [];
 
 /****************************************************
  * MATRIZ DO MÊS (SEGUNDA → DOMINGO)
  ****************************************************/
 const monthNames = [
-  "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
 ];
 
 function getMonthMatrix(year, month) {
@@ -155,7 +195,7 @@ function render() {
   monthLabel.textContent = `${monthNames[m]} ${y}`;
 
   const map = new Map();
-  window.calEvents.forEach(e => {
+  window.calEvents.forEach((e) => {
     const list = map.get(e.date) || [];
     list.push(e);
     map.set(e.date, list);
@@ -172,7 +212,7 @@ function render() {
     const wrap = document.createElement("div");
     wrap.className = "events";
 
-    (map.get(toISO(date)) || []).forEach(e => {
+    (map.get(toISO(date)) || []).forEach((e) => {
       const ev = document.createElement("div");
       ev.className = `event ${e.type}`;
       ev.textContent = e.title;
@@ -182,16 +222,17 @@ function render() {
     cell.append(label, wrap);
     calendarGrid.appendChild(cell);
   });
-   const monthISO = `${y}-${pad(m + 1)}-`;
-   const count = window.calEvents.filter(e =>
-     e.date.startsWith(monthISO) &&
-     e.type !== "bridge" // não conta pontes
-   ).length;
+  const monthISO = `${y}-${pad(m + 1)}-`;
+  const count = window.calEvents.filter(
+    (e) => e.date.startsWith(monthISO) && e.type !== "bridge" // não conta pontes
+  ).length;
 
-countLabel.textContent = `${count} eventos neste mês`;
+  countLabel.textContent = `${count} eventos neste mês`;
   const firstDay = new Date(y, m, 1);
   const lastDay = new Date(y, m + 1, 0);
-  rangeLabel.textContent = `De ${firstDay.getDate()} de ${monthNames[m]} a ${lastDay.getDate()} de ${monthNames[m]} de ${y}`;
+  rangeLabel.textContent = `De ${firstDay.getDate()} de ${
+    monthNames[m]
+  } a ${lastDay.getDate()} de ${monthNames[m]} de ${y}`;
 }
 
 /****************************************************
@@ -239,8 +280,6 @@ function preencherSelects() {
   eventMonth.value = pad(current.getMonth() + 1);
 }
 
-
-
 /****************************************************
  * BOTÃO ADICIONAR EVENTO
  ****************************************************/
@@ -257,16 +296,15 @@ document.getElementById("saveEvent").onclick = () => {
     id: Date.now(),
     title: eventTitle.value,
     date,
-    type: "user"
+    type: "user",
   });
 
   closeModal();
   carregarCalendario();
 };
 
-
 /****************************************************
-  * SELETOR DE ANO
+ * SELETOR DE ANO
  ****************************************************/
 const yearJump = document.getElementById("yearJump");
 
@@ -289,19 +327,18 @@ yearJump.onchange = () => {
 /****************************************************
  * CARREGAMENTO PRINCIPAL
  ****************************************************/
+
 async function carregarCalendario() {
   const year = current.getFullYear();
 
-  const feriados = await buscarFeriados(year);
+  let feriados;
+
+  feriados = await buscarFeriados(year);
+
   const pontes = gerarPontes(feriados);
   const comemorativas = datasComemorativas(year);
 
-  window.calEvents = [
-    ...userEvents,
-    ...feriados,
-    ...pontes,
-    ...comemorativas
-  ];
+  window.calEvents = [...userEvents, ...feriados, ...pontes, ...comemorativas];
   preencherYearJump();
   render();
 }
