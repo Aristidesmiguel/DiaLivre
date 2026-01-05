@@ -1,196 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calendário Mensal</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --accent: #22c55e;
-      --grid: #1f2937;
-      --today: #2563eb;
-      --event: #f59e0b;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: linear-gradient(180deg, #0b1220, #0f172a);
-      color: var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-    .app {
-      width: min(1100px, 100%);
-      background: rgba(17, 24, 39, 0.8);
-      border: 1px solid #1f2937;
-      border-radius: 16px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      overflow: hidden;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--grid);
-      background:
-        radial-gradient(1200px 500px at 20% 0%, rgba(34,197,94,0.15), transparent 65%),
-        radial-gradient(1200px 500px at 80% 0%, rgba(37,99,235,0.15), transparent 65%);
-    }
-    .title {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-    }
-    .title h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-    .title .range {
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .btn {
-      padding: 8px 12px;
-      border: 1px solid var(--grid);
-      background: #0b1324;
-      color: var(--text);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 18px rgba(0,0,0,0.35);
-      border-color: #334155;
-    }
-    .btn.primary {
-      background: linear-gradient(180deg, #1e293b, #111827);
-      border-color: #334155;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      border-top: 1px solid var(--grid);
-      gap: 0;
-    }
-    .weekday {
-      padding: 12px;
-      text-align: center;
-      font-weight: 600;
-      color: var(--muted);
-      border-bottom: 1px solid var(--grid);
-      background: #0d162b;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-    .cell {
-      min-height: 110px;
-      border-right: 1px solid var(--grid);
-      border-bottom: 1px solid var(--grid);
-      padding: 8px;
-      background: linear-gradient(180deg, #0f172a, #0f172acc);
-      position: relative;
-      overflow: hidden;
-    }
-    .cell:last-child { border-right: none; }
-    .date {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .other-month .date { opacity: 0.5; }
-    .today .date {
-      color: #fff;
-      background: var(--today);
-      border-radius: 999px;
-      padding: 2px 8px;
-      display: inline-block;
-      box-shadow: 0 6px 16px rgba(37,99,235,0.35);
-    }
-    .events {
-      margin-top: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .event {
-      display: grid;
-      grid-template-columns: 8px 1fr auto;
-      gap: 8px;
-      align-items: center;
-      padding: 6px 8px;
-      border-radius: 8px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
-    .event .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--event);
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-    }
-    .event .title {
-      font-size: 13px;
-      color: #fbbf24;
-      font-weight: 600;
-    }
-    .event .time {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    footer {
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--muted);
-      font-size: 13px;
-      border-top: 1px solid var(--grid);
-      background: #0d162b;
-    }
-    .legend {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .legend-dot {
-      width: 10px; height: 10px; border-radius: 999px; background: var(--event);
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
+  <link rel="stylesheet" href="styles/Style.css" />
 
-    /* Responsivo */
-    @media (max-width: 720px) {
-      .cell { min-height: 90px; }
-      header { flex-direction: column; gap: 10px; align-items: flex-start; }
-      .title h1 { font-size: 20px; }
-      .title .range { font-size: 13px; }
-      .weekday { font-size: 12px; padding: 10px; }
-    }
-  </style>
 </head>
+
+<section id="eventModal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Novo Evento</h2>
+
+    <label>
+      Título
+      <input type="text" id="eventTitle" />
+    </label>
+
+    <label>
+      Data
+      <div class="date-selects">
+        <select id="eventDay"></select>
+        <select id="eventMonth"></select>
+        <select id="eventYear"></select>
+      </div>
+    </label>
+
+    <label>
+     Descrição
+     <textarea id="eventDescription" rows="4"></textarea>
+    </label>
+
+    <div class="modal-actions">
+      <button id="cancelEvent" class="btn">Cancelar</button>
+      <button id="saveEvent" class="btn primary">Guardar</button>
+    </div>
+  </div>
+</section>
+
 <body>
   <main class="app" aria-label="Calendário mensal">
     <header>
@@ -199,11 +47,14 @@
         <span class="range" id="rangeLabel"></span>
       </div>
       <div class="controls">
+        
+        <button class="btn primary" id="addRandom">Adicionar Evento </button>
         <button class="btn" id="prevBtn" aria-label="Mês anterior">‹</button>
         <button class="btn" id="todayBtn" aria-label="Ir para hoje">Hoje</button>
         <button class="btn" id="nextBtn" aria-label="Próximo mês">›</button>
-        <button class="btn primary" id="addRandom">Adicionar evento de exemplo</button>
-      </div>
+        <select id="yearJump" class="btn"></select>
+        </div>
+
     </header>
 
     <section class="grid" id="weekdayRow" aria-hidden="false">
@@ -229,161 +80,6 @@
     </footer>
   </main>
 
-  <script>
-    // ---- Dados de entrada (integração) ----
-    // Estrutura esperada: [{ id, title, date: 'YYYY-MM-DD', start?: 'HH:MM', end?: 'HH:MM' }]
-    const incomingData = [
-      { id: 1, title: 'dia de comer bolo', date: '2026-01-05', start: '09:00', end: '10:30' },
-      { id: 2, title: 'Entrega Sprint', date: '2026-01-12', start: '15:00', end: '16:00' },
-      { id: 3, title: 'Workshop Frontend', date: '2026-01-18', start: '14:00', end: '17:00' },
-    ];
-    // Use window.calEvents para injetar dados externos (ex.: via fetch)
-    window.calEvents = [...incomingData];
-
-    // ---- Utilitários de data ----
-    const pad = (n) => String(n).padStart(2, '0');
-    const toISO = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-    const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-    // Semana iniciando na segunda-feira
-    const getMonthMatrix = (year, monthIndex) => {
-      const first = new Date(year, monthIndex, 1);
-      const last = new Date(year, monthIndex + 1, 0);
-      // Índice da semana com segunda=0 ... domingo=6
-      const startOffset = (first.getDay() + 6) % 7;
-      const totalDays = last.getDate();
-      const totalCells = Math.ceil((startOffset + totalDays) / 7) * 7;
-
-      const cells = [];
-      for (let i = 0; i < totalCells; i++) {
-        const dayNum = i - startOffset + 1;
-        const cellDate = new Date(year, monthIndex, dayNum);
-        const inMonth = dayNum >= 1 && dayNum <= totalDays;
-        cells.push({ date: cellDate, inMonth });
-      }
-      return cells;
-    };
-
-    // ---- Renderização ----
-    const calendarGrid = document.getElementById('calendarGrid');
-    const monthLabel = document.getElementById('monthLabel');
-    const rangeLabel = document.getElementById('rangeLabel');
-    const countLabel = document.getElementById('countLabel');
-
-    let current = new Date(); // data base
-
-    function render() {
-      const year = current.getFullYear();
-      const month = current.getMonth();
-      const matrix = getMonthMatrix(year, month);
-
-      monthLabel.textContent = `${monthNames[month]} ${year}`;
-
-      const firstVisible = matrix[0].date;
-      const lastVisible = matrix[matrix.length - 1].date;
-      rangeLabel.textContent = `${pad(firstVisible.getDate())} ${monthNames[firstVisible.getMonth()]} – ${pad(lastVisible.getDate())} ${monthNames[lastVisible.getMonth()]}`;
-
-      // Indexar eventos por data
-      const map = new Map();
-      (window.calEvents || []).forEach(ev => {
-        const key = ev.date;
-        const list = map.get(key) || [];
-        list.push(ev);
-        map.set(key, list);
-      });
-
-      // Limpa grid
-      calendarGrid.innerHTML = '';
-
-      const todayISO = toISO(new Date());
-
-      matrix.forEach(({ date, inMonth }, i) => {
-        const cell = document.createElement('div');
-        cell.className = 'cell' + (inMonth ? '' : ' other-month') + (toISO(date) === todayISO ? ' today' : '');
-
-        const dateLabel = document.createElement('div');
-        dateLabel.className = 'date';
-        dateLabel.textContent = String(date.getDate());
-
-        const eventsWrap = document.createElement('div');
-        eventsWrap.className = 'events';
-
-        const events = map.get(toISO(date)) || [];
-        events.forEach(e => {
-          const item = document.createElement('div');
-          item.className = 'event';
-          item.dataset.id = e.id;
-
-          const dot = document.createElement('span');
-          dot.className = 'dot';
-
-          const title = document.createElement('span');
-          title.className = 'title';
-          title.textContent = e.title;
-
-          const time = document.createElement('span');
-          time.className = 'time';
-          time.textContent = e.start
-            ? (e.end ? `${e.start}–${e.end}` : e.start)
-            : '';
-
-          item.appendChild(dot);
-          item.appendChild(title);
-          item.appendChild(time);
-          eventsWrap.appendChild(item);
-        });
-
-        cell.appendChild(dateLabel);
-        cell.appendChild(eventsWrap);
-        calendarGrid.appendChild(cell);
-      });
-
-      // Contador de eventos do mês atual
-      const monthISO = `${year}-${pad(month + 1)}-`;
-      const count = (window.calEvents || []).filter(e => e.date.startsWith(monthISO)).length;
-      countLabel.textContent = `${count} evento${count === 1 ? '' : 's'} neste mês`;
-    }
-
-    // ---- Navegação ----
-    document.getElementById('prevBtn').addEventListener('click', () => {
-      current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
-      render();
-    });
-    document.getElementById('nextBtn').addEventListener('click', () => {
-      current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
-      render();
-    });
-    document.getElementById('todayBtn').addEventListener('click', () => {
-      current = new Date();
-      render();
-    });
-
-    // ---- Exemplo de integração dinâmica (mock) ----
-    document.getElementById('addRandom').addEventListener('click', () => {
-      const y = current.getFullYear();
-      const m = current.getMonth();
-      const day = Math.floor(Math.random() * 28) + 1;
-      const iso = `${y}-${pad(m+1)}-${pad(day)}`;
-      const hh = pad(Math.floor(Math.random() * 9) + 8);
-      const mm = ['00','30'][Math.floor(Math.random()*2)];
-      window.calEvents.push({
-        id: Date.now(),
-        title: 'Evento adicionado',
-        date: iso,
-        start: `${hh}:${mm}`,
-        end: `${pad(Number(hh)+1)}:${mm}`
-      });
-      render();
-    });
-
-    // ---- Inicialização ----
-    render();
-
-    // ---- Exemplo de como carregar dados externos ----
-    // fetch('/api/eventos')
-    //   .then(r => r.json())
-    //   .then(data => { window.calEvents = data; render(); })
-    //   .catch(console.error);
-  </script>
+  <script src="src/scripts/script.js"></script>
 </body>
 </html>
