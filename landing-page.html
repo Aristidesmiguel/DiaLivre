@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Responsividade -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calendário Angolano</title>
+
+    <!-- =========================
+         ESTILOS (CSS)
+         Design elegante, simples e impactante
+    ========================== -->
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Paleta inspirada na bandeira de Angola */
+        :root {
+            --vermelho-escuro: #7a0c1c;
+            --vermelho: #b11226;
+            --amarelo-claro: #fff4cc;
+            --amarelo: #f2c300;
+            --preto: #111;
+            --branco: #ffffff;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+
+            /* Fundo em gradiente elegante */
+            background: linear-gradient(
+                135deg,
+                var(--vermelho-escuro),
+                var(--vermelho),
+                var(--amarelo)
+            );
+
+            color: var(--branco);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Área principal */
+        .container {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* TÍTULO PRINCIPAL */
+        h1 {
+            font-size: 3rem;              /* Grande e dominante */
+            font-weight: bold;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            line-height: 1.2;
+        }
+
+        /* Bloco da data */
+        .data-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(4px);  /* Elegância leve */
+        }
+
+        .data-hoje {
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botão principal */
+        .btn-calendario {
+            background-color: var(--preto);
+            color: var(--branco);
+            border: none;
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-calendario:hover {
+            background-color: var(--vermelho);
+            transform: translateY(-2px);
+        }
+
+        .gratis {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--amarelo-claro);
+            margin-bottom: 50px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.85);
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        /* =========================
+           RESPONSIVIDADE
+        ========================== */
+
+        /* Tablets */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.3rem;
+            }
+
+            .data-hoje {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.9rem;
+            }
+
+            .btn-calendario {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================
+         CONTEÚDO PRINCIPAL
+    ========================== -->
+    <main class="container">
+
+        <!-- Título -->
+        <h1>Calendário de Feriados Angolanos</h1>
+
+        <!-- Data atual em destaque -->
+        <div class="data-box">
+            <p class="data-hoje" id="dataHoje">
+                <!-- Fallback -->
+                Hoje: Data indisponível
+            </p>
+        </div>
+
+        <!-- 
+            Botão para acessar o calendário
+            FUTURO LINK: calendario.html ou /calendario
+        -->
+        <button class="btn-calendario" id="btnCalendario">
+            Ver Calendário - 2026
+        </button>
+
+        <p class="gratis">Grátis</p>
+
+    </main>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer>
+        <p>Desenvolvido com orgulho para Angola</p>
+        <p>© 2026 Calendário Angolano. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- =========================
+         SCRIPT (JavaScript)
+         Simples, resiliente e comentado
+    ========================== -->
+    <script>
+        try {
+            const dataHojeElemento = document.getElementById("dataHoje");
+
+            if (!dataHojeElemento) {
+                console.error("Elemento de data não encontrado.");
+            } else {
+                const hoje = new Date();
+
+                const diasSemana = [
+                    "Domingo",
+                    "Segunda",
+                    "Terça",
+                    "Quarta",
+                    "Quinta",
+                    "Sexta",
+                    "Sábado"
+                ];
+
+                const meses = [
+                    "Janeiro",
+                    "Fevereiro",
+                    "Março",
+                    "Abril",
+                    "Maio",
+                    "Junho",
+                    "Julho",
+                    "Agosto",
+                    "Setembro",
+                    "Outubro",
+                    "Novembro",
+                    "Dezembro"
+                ];
+
+                const diaSemana = diasSemana[hoje.getDay()] || "Dia";
+                const diaMes = hoje.getDate() || "";
+                const mes = meses[hoje.getMonth()] || "Mês";
+
+                dataHojeElemento.textContent =
+                    Hoje: ${diaSemana}, ${diaMes} ${mes};
+            }
+
+            const btnCalendario = document.getElementById("btnCalendario");
+
+            if (btnCalendario) {
+                btnCalendario.addEventListener("click", function () {
+                    // FUTURO LINK PARA O CALENDÁRIO
+                    console.log("Botão Ver Calendário clicado.");
+                });
+            } else {
+                console.error("Botão do calendário não encontrado.");
+            }
+
+        } catch (erro) {
+            console.error("Erro inesperado:", erro);
+        }
+    </script>
+
+</body>
+</html>
