@@ -1,11 +1,642 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendário Angola 2026 - Feriados e Pontes</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --grid: #1f2937;
+      --today: #2563eb;
+      --event: #f59e0b;
+      --holiday: #2563eb;
+      --bridge: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: linear-gradient(180deg, #0b1220, #0f172a);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(11, 18, 32, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1f2937;
+      padding: 16px 0;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      font-size: 26px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    }
+
+    /* Decorative Calendar Icons */
+    .floating-calendar {
+      position: absolute;
+      font-size: 80px;
+      opacity: 0.08;
+      pointer-events: none;
+      animation: float-slow 20s ease-in-out infinite;
+    }
+
+    .floating-calendar:nth-child(1) { top: 15%; left: 8%; animation-delay: 0s; }
+    .floating-calendar:nth-child(2) { top: 25%; right: 10%; animation-delay: 3s; font-size: 60px; }
+    .floating-calendar:nth-child(3) { top: 50%; left: 5%; animation-delay: 6s; font-size: 70px; }
+    .floating-calendar:nth-child(4) { top: 70%; right: 12%; animation-delay: 9s; }
+    .floating-calendar:nth-child(5) { bottom: 15%; left: 15%; animation-delay: 12s; font-size: 65px; }
+    .floating-calendar:nth-child(6) { bottom: 25%; right: 8%; animation-delay: 15s; font-size: 75px; }
+
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(5deg); }
+      50% { transform: translateY(-10px) rotate(-3deg); }
+      75% { transform: translateY(-15px) rotate(3deg); }
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px 60px;
+      background:
+        radial-gradient(1400px 600px at 50% 0%, rgba(239, 68, 68, 0.15), transparent 70%),
+        radial-gradient(1200px 500px at 20% 40%, rgba(34, 197, 94, 0.1), transparent 65%),
+        radial-gradient(1200px 500px at 80% 60%, rgba(234, 179, 8, 0.1), transparent 65%);
+      overflow: hidden;
+    }
+
+    /* Animated Grid Pattern */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(31, 41, 55, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 41, 55, 0.3) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: grid-move 30s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes grid-move {
+      from { transform: translate(0, 0); }
+      to { transform: translate(50px, 50px); }
+    }
+
+
+
+    .flag-icon {
+      font-size: 100px;
+      margin-bottom: 24px;
+      animation: float-flag 4s ease-in-out infinite;
+      filter: drop-shadow(0 10px 30px rgba(239, 68, 68, 0.5));
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes float-flag {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-15px) scale(1.05); }
+    }
+
+    .hero .year-badge {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #bbf7d0;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
+      position: relative;
+      z-index: 2;
+      animation: pulse-badge 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25); }
+      50% { box-shadow: 0 4px 30px rgba(34, 197, 94, 0.4); }
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 7vw, 84px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #e5e7eb 40%, #9ca3af 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      text-align: center;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      position: relative;
+      z-index: 2;
+      animation: slide-up 1s ease-out;
+    }
+
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero .subtitle {
+      font-size: clamp(18px, 3.5vw, 32px);
+      color: var(--muted);
+      margin-bottom: 56px;
+      text-align: center;
+      font-weight: 300;
+      position: relative;
+      z-index: 2;
+      animation: slide-up 1s ease-out 0.2s backwards;
+    }
+
+    .cta-button {
+      padding: 18px 56px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      animation: slide-up 1s ease-out 0.4s backwards;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.3));
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .cta-button:hover::before {
+      transform: translateX(100%);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(34, 197, 94, 0.5);
+    }
+
+    .cta-button:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Stats Section */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 28px;
+      max-width: 1100px;
+      margin: -80px auto 100px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .stat-card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid #1f2937;
+      border-radius: 18px;
+      padding: 40px 28px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #16a34a);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-color: #334155;
+    }
+
+    .stat-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+      animation: bounce-icon 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce-icon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .stat-card:nth-child(2) .stat-icon { animation-delay: 0.3s; }
+    .stat-card:nth-child(3) .stat-icon { animation-delay: 0.6s; }
+
+    .stat-number {
+      font-size: 56px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .stat-card:nth-child(2) .stat-number {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card:nth-child(3) .stat-number {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+    }
+
+    /* Features Section */
+    .features {
+      max-width: 1100px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+    }
+
+    .features h2 {
+      font-size: 42px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 60px;
+      background: linear-gradient(135deg, #fff, #9ca3af);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: #334155;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 22px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      background: #0b1220;
+      border-top: 1px solid #1f2937;
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    footer p {
+      margin-bottom: 8px;
+    }
+
+    .footer-heart {
+      color: #ef4444;
+      animation: pulse-heart 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .hero { min-height: 85vh; padding-top: 100px; }
+      .flag-icon { font-size: 70px; }
+      .stats { margin-top: -60px; gap: 20px; }
+      .stat-card { padding: 32px 20px; }
+      .stat-number { font-size: 44px; }
+      .stat-icon { font-size: 40px; }
+      .features h2 { font-size: 32px; }
+      .floating-calendar { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <script src="src/scripts/script.js"></script>
+  <!-- Floating Calendar Icons -->
+  <div class="floating-calendar">📅</div>
+  <div class="floating-calendar">📆</div>
+  <div class="floating-calendar">🗓️</div>
+  <div class="floating-calendar">📅</div>
+  <div class="floating-calendar">📆</div>
+  <div class="floating-calendar">🗓️</div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span>🇦🇴</span>
+        Calendário Angola
+      </a>
+      <ul class="nav-links">
+        <li><a href="#inicio">Home</a></li>
+        <li><a href="#sobre">Sobre Nós</a></li>
+        <li><a href="#funcoes">Funções</a></li>
+        <li><a href="calendario.html">Calendário</a></li>
+      </ul>
+      <a href="calendario.html" class="nav-cta">Abrir Calendário</a>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero" id="inicio">
+    <div class="flag-icon">🇦🇴</div>
+    <div class="year-badge">✨ ANO 2026 ✨</div>
+    <h1>Calendário de Angola</h1>
+    <p class="subtitle">Todos os feriados, pontes e datas importantes</p>
+    <button class="cta-button" onclick="window.location.href='calendario.html'">
+      Ver Calendário Completo 🚀
+    </button>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats">
+    <div class="stat-card">
+      <span class="stat-icon">🎉</span>
+      <div class="stat-number">13</div>
+      <div class="stat-label">Feriados Nacionais</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🌉</span>
+      <div class="stat-number">8</div>
+      <div class="stat-label">Pontes Possíveis</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📆</span>
+      <div class="stat-number">365</div>
+      <div class="stat-label">Dias do Ano</div>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <div class="features" id="sobre" style="margin-bottom: 60px;">
+    <h2>Sobre Nós</h2>
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+      <p style="font-size: 18px; line-height: 1.8; color: var(--muted); margin-bottom: 24px;">
+        Somos uma plataforma dedicada a facilitar o planejamento do seu ano. Criamos este calendário para ajudar todos os angolanos a organizarem melhor suas rotinas, viagens e compromissos.
+      </p>
+      <p style="font-size: 18px; line-height: 1.8; color: var(--muted);">
+        Nossa missão é fornecer informações precisas e atualizadas sobre todos os feriados nacionais, pontes e datas importantes de Angola de forma simples e acessível.
+      </p>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features" id="funcoes">
+    <h2>Funções do Calendário</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🗓️</span>
+        <h3>Visualização Completa</h3>
+        <p>Veja todos os meses do ano em um layout moderno e intuitivo com fácil navegação</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎊</span>
+        <h3>Feriados Nacionais</h3>
+        <p>Todos os feriados oficiais de Angola destacados e organizados por categoria</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌉</span>
+        <h3>Pontes Identificadas</h3>
+        <p>Descubra as melhores oportunidades de pontes para planejar suas viagens</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📱</span>
+        <h3>100% Responsivo</h3>
+        <p>Acesse de qualquer dispositivo - desktop, tablet ou smartphone</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <h3>Rápido e Moderno</h3>
+        <p>Interface veloz com design contemporâneo e animações suaves</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🇦🇴</span>
+        <h3>Feito para Angola</h3>
+        <p>Totalmente adaptado aos feriados e datas oficiais de Angola</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Calendário de Feriados de Angola 2026</p>
+    <p>Feito com <span class="footer-heart">❤️</span> para Angola</p>
+    <p style="margin-top: 20px; font-size: 13px;">🇦🇴 Pátria ou Morte, Venceremos! 🇦🇴</p>
+  </footer>
+
+  <script>
+    // Parallax effect on floating calendars
+    document.addEventListener('mousemove', (e) => {
+      const calendars = document.querySelectorAll('.floating-calendar');
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      calendars.forEach((cal, i) => {
+        const speed = (i + 1) * 0.5;
+        cal.style.transform = `translate(${x * speed * 20}px, ${y * speed * 20}px) rotate(${x * speed * 5}deg)`;
+      });
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Add scroll effect to navbar
+    let lastScroll = 0;
+    const nav = document.querySelector('nav');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+      
+      lastScroll = currentScroll;
+    });
+  </script>
 </body>
 </html>
